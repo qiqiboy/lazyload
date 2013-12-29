@@ -20,8 +20,7 @@ var lazyload=(function(){
 			WW=win.innerWidth || doc&&doc.clientWidth || body.clientWidth || 0;
 
 			while(i<ret.length){
-				!ret[i]||ret[i].loaded?ret.splice(i--,1):check.call(ret[i]);
-				i++;
+				!ret[i]||ret[i].loaded?ret.splice(i,1):check.call(ret[i++]);
 			}
 			
 			!ret.length && (bind=!removeEvent()); //队列为空则取消事件绑定
