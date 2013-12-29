@@ -15,7 +15,7 @@ var lazyload=(function(){
 				body=document.body;
 			/* tick由浏览器resize或者scroll时触发，所以此刻更新相关数值 */
 			WST=win.pageYOffset || doc&&doc.scrollTop || body.scrollTop || 0;
-			WSL=win.pageYOffset || doc&&doc.scrollLeft || body.scrollLeft || 0;
+			WSL=win.pageXOffset || doc&&doc.scrollLeft || body.scrollLeft || 0;
 			WH=win.innerHeight || doc&&doc.clientHeight || body.clientHeight || 0;
 			WW=win.innerWidth || doc&&doc.clientWidth || body.clientWidth || 0;
 
@@ -34,7 +34,7 @@ var lazyload=(function(){
 					top=offset.top+WST;
 					left=offset.left+WSL;
 					elem=null;
-				}else{
+				}else{//maybe need ???
 					left+=elem.offsetLeft||0;
 					top+=elem.offsetTop||0;
 					elem=elem.offsetParent;
@@ -50,7 +50,7 @@ var lazyload=(function(){
 			}
 			
 			offset=getOffset(this);
-			
+
 			if(!orig){
 				this.loaded=true;
 			}else if(offset.top+this.height>WST && offset.top<WST+WH && offset.left+this.width>WSL && offset.left<WSL+WW){
