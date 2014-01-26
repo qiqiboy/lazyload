@@ -61,7 +61,7 @@
 			}
 			return true;
 		},
-		removeEvent=function(){console.log(8)
+		removeEvent=function(){
 			try{
 				if(win.removeEventListener){
 					win.removeEventListener('resize',resize,false);
