@@ -15,7 +15,7 @@
 	<p style="margin-top:300px;"><img id="scrollImg" data-original="images/1.jpg" /></p>
 </div>
 <script>
-	LazyLoad([].splice.call(document.images,0,2));
+	LazyLoad([document.images[0],document.images[1]]);
 	LazyLoad('scrollImg',{callback:function(){
 		this.src=this.getAttribute('data-original');
 		alert('滚动容器图片加载成功！');
