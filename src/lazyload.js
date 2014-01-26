@@ -22,7 +22,7 @@
 			WW=win.innerWidth || doc&&doc.clientWidth || body.clientWidth || 0;
 
 			while(i<ret.length){
-				ret[i].length?ret[i++].check():ret.splice(i,1);
+				ret[i].length?ret[i++].check():delete ret.splice(i,1)[0].checking;
 			}
 
 			!ret.length && (bind=!removeEvent()); //队列为空则取消事件绑定
@@ -61,7 +61,7 @@
 			}
 			return true;
 		},
-		removeEvent=function(){
+		removeEvent=function(){console.log(8)
 			try{
 				if(win.removeEventListener){
 					win.removeEventListener('resize',resize,false);
@@ -80,17 +80,24 @@
 	Struct.fn=Struct.prototype={
 		length:0,
 		splice:[].splice,
+		dcb:function(){//默认回调函数
+			var orig=this.getAttribute('data-original');
+			if(orig)this.src=orig;
+		},
 		init:function(elem, func){
+			this.cb=func||this.dcb;
+			return this.push(elem);
+		},
+		push:function(elem){
 			if(typeof elem == 'string'){
 				elem=document.getElementById(elem);
 			}
 			this.merge(elem);
-			this.cb=func||function(){//默认回调为替换图片src
-				if(this.nodeName.toLowerCase()=='img')
-					this.src=this.getAttribute('data-original');
-			};
 			if(this.length){
-				ret.push(this);
+				if(!this.checking){
+					ret.push(this);
+					this.checking=true;
+				}
 				resize();
 				!bind && (bind=addEvent())
 			}
