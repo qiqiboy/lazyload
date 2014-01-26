@@ -1,11 +1,9 @@
 lazyload
 ==========
 
-> javascript图片延迟加载组件
+> javascript节点惰性加载执行组件
 
-> 完整的实现需配合后端，简单来说就是输出到页面上的图片需要将src留空位置设置为一个临时小图片，真实的地址写到data-original属性中。
-
-> 没有什么可配置项，因为很简单，不想把组件写复杂了，所以如果又需要修改data-attribute或者定义回调函数，可以自行fork修改下源码，以适合自己的项目使用。
+> 注意：本组件并非专用于图片的延迟加载，还可以用于普通节点的延迟加载（事件执行）。
 
 > 有问题欢迎微博交流http://weibo.com/qiqiboy
 
@@ -14,21 +12,24 @@ lazyload
 // 首先在页面中引入lazyload.js
 
 /**
- * @param img string 图片id或者某个节点id，如果是后者则会lazyload该节点下所有img
- *		  	  image 单个图片对象
- *		  	  Array | imageCollection 一组图片的集合引用
- *			  jQuery jquery对象，比如lazyload($('img.lazy'));
+ * @param elem string 节点id
+ *		  	   Element 节点对象
+ *		  	   Array | imageCollection 一组图片的集合引用
+ *			   jQuery jquery对象，比如lazyload($('img.lazy'));
+ * @param callback Function 回调函数
  */
 
-lazyload=function(img){}
+LazyLoad=function(elem, callback){}
 
 //调用
-lazyload(img);
-lazyload('imgID');
-lazyload('elementID');
-lazyload(parent.getElementsByTagName('img'));
-lazyload($('img.lazy'));
-lazyload([img,img1,img2[,...,imgN]]);
+LazyLoad(elem,function(){});
+LazyLoad($('img.lazy'),function(){});
+LazyLoad([img,img1,img2[,...,imgN]],function(){});
+
+//如果想用于图片lazyload
+LazyLoad(elem,function(){
+	this.src=this.getAttribute('data-original');
+});
 
 ````
 

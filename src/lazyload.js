@@ -1,14 +1,16 @@
 /**
- * easy-lazyload v1.0
- * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2013/12/27
+ * easy-lazyload v1.1
+ * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2014/01/26
  */
- 
-var lazyload=(function(){
+
+;
+(function(ROOT, NS, Struct, undefined){
+	"use strict";
+	
 	var win=window,
 		ret=[],
 		bind=false,
 		timer=null,
-		original='data-original',//如果图片地址所在属性名不同，可修改此选项
 		tick=function(){
 			var i=0,
 				doc=document.documentElement,
@@ -20,9 +22,9 @@ var lazyload=(function(){
 			WW=win.innerWidth || doc&&doc.clientWidth || body.clientWidth || 0;
 
 			while(i<ret.length){
-				!ret[i]||ret[i].loaded?ret.splice(i,1):check.call(ret[i++]);
+				ret[i].length?ret[i++].check():ret.splice(i,1);
 			}
-			
+
 			!ret.length && (bind=!removeEvent()); //队列为空则取消事件绑定
 		},
 		getOffset=function(elem){
@@ -41,22 +43,6 @@ var lazyload=(function(){
 			}
 			return {top:top,left:left};
 		},
-		check=function(){
-			var offset,orig=this.getAttribute(original);
-				
-			if(!this.getAttribute('src')){
-				this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC';
-			}
-			
-			offset=getOffset(this);
-
-			if(!orig){
-				this.loaded=true;
-			}else if(offset.top+this.height>WST && offset.top<WST+WH && offset.left+this.width>WSL && offset.left<WSL+WW){
-				this.src=orig;
-				this.loaded=true;
-			}
-		},
 		resize=function(){
 			clearTimeout(timer);
 			timer=setTimeout(tick,100);
@@ -70,7 +56,9 @@ var lazyload=(function(){
 					win.attachEvent('onresize',resize);
 					win.attachEvent('onscroll',resize);
 				}
-			}catch(e){}
+			}catch(e){
+				return false;
+			}
 			return true;
 		},
 		removeEvent=function(){
@@ -82,34 +70,66 @@ var lazyload=(function(){
 					win.detachEvent('onresize',resize);
 					win.detachEvent('onscroll',resize);
 				}
-			}catch(e){}
+			}catch(e){
+				return false;
+			}
 			return true;
 		},
 		WST,WSL,WW,WH;//浏览器scrollTop scrollLeft innerWidth innerHeight
-	
-	return function(img){
-		if(typeof img == 'string'){
-			img=document.getElementById(img);
-		}
-		if(!img)return;
-		if(img.nodeName && img.nodeName.toLowerCase()!='img'){
-			img=img.getElementsByTagName('img');
-		}
-		if(img.length){//htmlCollection -> Array
-			try{
-				img=[].slice.call(img,0);
-			}catch(e){
-				var old=img,i=0,j=img.length;
-				img=[];
-				while(i<j){
-					img.push(old[i++]);
-				}
+		
+	Struct.fn=Struct.prototype={
+		length:0,
+		splice:[].splice,
+		init:function(elem, func){
+			if(typeof elem == 'string'){
+				elem=document.getElementById(elem);
 			}
-		}
-		ret=ret.concat(img);
-		if(ret.length){
-			resize();
-			!bind && (bind=addEvent())
+			this.merge(elem);
+			this.cb=func||function(){//默认回调为替换图片src
+				if(this.nodeName.toLowerCase()=='img')
+					this.src=this.getAttribute('data-original');
+			};
+			if(this.length){
+				ret.push(this);
+				resize();
+				!bind && (bind=addEvent())
+			}
+			return this;
+		},
+		merge:function(elem){
+			var arr=[],
+				type=typeof elem,
+				i=this.length,
+				j=0;
+			if(elem){
+				arr=type!='function' && type!='string' && (elem.length===0 || elem.length && (elem.length-1) in elem) ? elem : [elem];
+				while(j<arr.length){
+					if(arr[j] && arr[j].nodeType==1)//确保是DOM节点
+						this[i++]=arr[j++];
+				}
+				this.length=i;
+			}
+			return this;
+		},
+		check:function(){
+			var i=0,
+				elem,
+				offset;
+			while(i<this.length){
+				elem=this[i];
+				offset=getOffset(elem);
+				if(offset.top+elem.offsetHeight>WST && offset.top<WST+WH && offset.left+elem.offsetWidth>WSL && offset.left<WSL+WW){
+					this.cb.call(this.splice(i,1)[0]);
+				}else i++;
+			}
+			return this;
 		}
 	}
-})();
+	
+	Struct.fn.init.prototype=Struct.fn;
+	
+	return ROOT[NS]=Struct;
+	
+})(window, 'LazyLoad',function(elem, func){
+	return new arguments.callee.fn.init(elem, func);
+});
