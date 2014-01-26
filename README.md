@@ -16,7 +16,7 @@ lazyload
  *		  	   Element 节点对象
  *		  	   Array | imageCollection 一组图片的集合引用
  *			   jQuery jquery对象，比如lazyload($('img.lazy'));
- * @param callback Function 回调函数
+ * @param cfg Object|Function {callback:function(){},container:window} 如果cfg是一个函数，则默认为回调函数
  */
 
 LazyLoad=function(elem, callback){}
@@ -24,7 +24,7 @@ LazyLoad=function(elem, callback){}
 //调用
 LazyLoad(elem,function(){});
 LazyLoad($('img.lazy'),function(){});
-LazyLoad([img,img1,img2[,...,imgN]],function(){});
+LazyLoad([img,img1,img2[,...,imgN]],{callback:function(){},container:document.getElementById('container'));
 
 //如果想用于图片lazyload
 LazyLoad(elem,function(){

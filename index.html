@@ -11,8 +11,15 @@
 <h1>lazyload test</h1>
 <p><img data-original="images/1.jpg" width="200" height="400"/></p>
 <p style="margin-top:300px;"><img data-original="images/1.jpg" /></p>
+<div id="container" style="height:200px;background:#eee;overflow:auto;">
+	<p style="margin-top:300px;"><img id="scrollImg" data-original="images/1.jpg" /></p>
+</div>
 <script>
-	a=LazyLoad(document.images);
+	LazyLoad([].splice.call(document.images,0,2));
+	LazyLoad('scrollImg',{callback:function(){
+		this.src=this.getAttribute('data-original');
+		alert('滚动容器图片加载成功！');
+	},container:document.getElementById('container')});
 </script>
 </body>
 </html>

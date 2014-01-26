@@ -7,27 +7,7 @@
 (function(ROOT, NS, Struct, undefined){
 	"use strict";
 	
-	var win=window,
-		ret=[],
-		bind=false,
-		timer=null,
-		tick=function(){
-			var i=0,
-				doc=document.documentElement,
-				body=document.body;
-			/* tick由浏览器resize或者scroll时触发，所以此刻更新相关数值 */
-			WST=win.pageYOffset || doc&&doc.scrollTop || body.scrollTop || 0;
-			WSL=win.pageXOffset || doc&&doc.scrollLeft || body.scrollLeft || 0;
-			WH=win.innerHeight || doc&&doc.clientHeight || body.clientHeight || 0;
-			WW=win.innerWidth || doc&&doc.clientWidth || body.clientWidth || 0;
-
-			while(i<ret.length){
-				ret[i].length?ret[i++].check():delete ret.splice(i,1)[0].checking;
-			}
-
-			!ret.length && (bind=!removeEvent()); //队列为空则取消事件绑定
-		},
-		getOffset=function(elem){
+	var getOffset=function(elem){
 			var top=0,left=0,offset;
 			while(elem){
 				if("getBoundingClientRect" in elem){
@@ -43,12 +23,9 @@
 			}
 			return {top:top,left:left};
 		},
-		resize=function(){
-			clearTimeout(timer);
-			timer=setTimeout(tick,100);
-		},
-		addEvent=function(){
+		addEvent=function(win){
 			try{
+				var resize=Data(win,'resize');
 				if(win.addEventListener){
 					win.addEventListener('resize',resize,false);
 					win.addEventListener('scroll',resize,false);
@@ -61,8 +38,9 @@
 			}
 			return true;
 		},
-		removeEvent=function(){
+		removeEvent=function(win){
 			try{
+				var resize=Data(win,'resize');
 				if(win.removeEventListener){
 					win.removeEventListener('resize',resize,false);
 					win.removeEventListener('scroll',resize,false);
@@ -75,8 +53,44 @@
 			}
 			return true;
 		},
-		WST,WSL,WW,WH;//浏览器scrollTop scrollLeft innerWidth innerHeight
+		Data=function(elem, key, value){
+			if(key==null){
+				return elem.lazyData||(elem.lazyData={ret:[],bind:null,timer:null,tick:function(){
+					var i=0,
+						win=elem,
+						data=Data(win),
+						doc=document.documentElement,
+						body=document.body,
+						isWin=win!=null&&win==win.window;
+					/* tick由浏览器resize或者scroll时触发，所以此刻更新相关数值 */
+					data.WST=(isWin ? win.pageYOffset || doc&&doc.scrollTop || body.scrollTop : getOffset(win).top) || 0;
+					data.WSL=(isWin ? win.pageXOffset || doc&&doc.scrollLeft || body.scrollLeft : getOffset(win).left) || 0;
+					data.WH=(isWin ? win.innerHeight || doc&&doc.clientHeight || body.clientHeight : win.clientHeight) || 0;
+					data.WW=(isWin ? win.innerWidth || doc&&doc.clientWidth || body.clientWidth : win.clientWidth) || 0;
+					
+					if(isWin){
+						WST=data.WST;
+						WSL=data.WSL;
+					}
+					
+					while(i<data.ret.length){
+						data.ret[i].length?data.ret[i++].check():delete data.ret.splice(i,1)[0].checking;
+					}
 		
+					!data.ret.length && (data.bind=!removeEvent(win)); //队列为空则取消事件绑定
+				},resize:function(){
+					var data=Data(elem);
+					clearTimeout(data.timer);
+					data.timer=setTimeout(data.tick,100);
+				}});
+			}
+			if(value==null){
+				return Data(elem)[key];
+			}
+			return Data(elem)[key]=value;
+		},
+		WST=0,WSL=0;
+			
 	Struct.fn=Struct.prototype={
 		length:0,
 		splice:[].splice,
@@ -84,8 +98,21 @@
 			var orig=this.getAttribute('data-original');
 			if(orig)this.src=orig;
 		},
-		init:function(elem, func){
+		init:function(elem, cfg){
+			var func,container,
+				type=typeof cfg;
+			if(type=='function'){
+				func=cfg;
+			}else if(type=='object'){
+				func=cfg.callback;
+				container=cfg.container==null||
+					cfg.container.nodeType==9||
+					cfg.container.nodeName.toLowerCase()=='body'||
+					cfg.container.nodeName.toLowerCase()=='html' ?
+					0 : cfg.container;
+			}
 			this.cb=func||this.dcb;
+			this.container=container||window;
 			return this.push(elem);
 		},
 		push:function(elem){
@@ -94,12 +121,13 @@
 			}
 			this.merge(elem);
 			if(this.length){
+				var data=Data(this.container);
 				if(!this.checking){
-					ret.push(this);
+					data.ret.push(this);
 					this.checking=true;
 				}
-				resize();
-				!bind && (bind=addEvent())
+				data.resize();
+				!data.bind && (data.bind=addEvent(this.container))
 			}
 			return this;
 		},
@@ -120,12 +148,13 @@
 		},
 		check:function(){
 			var i=0,
+				data=Data(this.container),
 				elem,
 				offset;
 			while(i<this.length){
 				elem=this[i];
 				offset=getOffset(elem);
-				if(offset.top+elem.offsetHeight>WST && offset.top<WST+WH && offset.left+elem.offsetWidth>WSL && offset.left<WSL+WW){
+				if(offset.top+elem.offsetHeight>=data.WST && offset.top<=data.WST+data.WH && offset.left+elem.offsetWidth>=data.WSL && offset.left<=data.WSL+data.WW){
 					this.cb.call(this.splice(i,1)[0]);
 				}else i++;
 			}
@@ -137,6 +166,6 @@
 	
 	return ROOT[NS]=Struct;
 	
-})(window, 'LazyLoad',function(elem, func){
-	return new arguments.callee.fn.init(elem, func);
+})(window, 'LazyLoad',function(elem, cfg){
+	return new arguments.callee.fn.init(elem, cfg);
 });
