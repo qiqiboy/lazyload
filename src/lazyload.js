@@ -7,7 +7,8 @@
 (function(ROOT, NS, Struct, undefined){
 	"use strict";
 	
-	var getOffset=function(elem){
+	var DOC=ROOT.document,
+		getOffset=function(elem){
 			var top=0,left=0,offset;
 			while(elem){
 				if("getBoundingClientRect" in elem){
@@ -23,30 +24,32 @@
 			}
 			return {top:top,left:left};
 		},
-		addEvent=function(win){
+		addEvent=function(elem){
 			try{
-				var resize=Data(win,'resize');
+				var win=ROOT,
+					resize=Data(elem,'resize');
 				if(win.addEventListener){
 					win.addEventListener('resize',resize,false);
-					win.addEventListener('scroll',resize,false);
+					elem.addEventListener('scroll',resize,false);
 				}else{
 					win.attachEvent('onresize',resize);
-					win.attachEvent('onscroll',resize);
+					elem.attachEvent('onscroll',resize);
 				}
 			}catch(e){
 				return false;
 			}
 			return true;
 		},
-		removeEvent=function(win){
+		removeEvent=function(elem){
 			try{
-				var resize=Data(win,'resize');
+				var win=ROOT,
+					resize=Data(elem,'resize');
 				if(win.removeEventListener){
 					win.removeEventListener('resize',resize,false);
-					win.removeEventListener('scroll',resize,false);
+					elem.removeEventListener('scroll',resize,false);
 				}else{
 					win.detachEvent('onresize',resize);
-					win.detachEvent('onscroll',resize);
+					elem.detachEvent('onscroll',resize);
 				}
 			}catch(e){
 				return false;
@@ -59,8 +62,8 @@
 					var i=0,
 						win=elem,
 						data=Data(win),
-						doc=document.documentElement,
-						body=document.body,
+						doc=DOC.documentElement,
+						body=DOC.body,
 						isWin=win!=null&&win==win.window;
 					/* tick由浏览器resize或者scroll时触发，所以此刻更新相关数值 */
 					data.WST=(isWin ? win.pageYOffset || doc&&doc.scrollTop || body.scrollTop : getOffset(win).top) || 0;
@@ -112,12 +115,12 @@
 					0 : cfg.container;
 			}
 			this.cb=func||this.dcb;
-			this.container=container||window;
+			this.container=container||ROOT;
 			return this.push(elem);
 		},
 		push:function(elem){
 			if(typeof elem == 'string'){
-				elem=document.getElementById(elem);
+				elem=DOC.getElementById(elem);
 			}
 			this.merge(elem);
 			if(this.length){
