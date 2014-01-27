@@ -1,5 +1,5 @@
 /**
- * easy-lazyload v1.1
+ * easy-lazyload v1.2
  * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2014/01/26
  */
 
@@ -108,11 +108,16 @@
 				func=cfg;
 			}else if(type=='object'){
 				func=cfg.callback;
-				container=cfg.container==null||
-					cfg.container.nodeType!=1||
-					cfg.container.nodeName.toLowerCase()=='body'||
-					cfg.container.nodeName.toLowerCase()=='html' ?
-					0 : cfg.container;
+				container=cfg.container;
+				if(this.isArrayLike(container)){
+					container=container[0];
+				}
+				if(typeof container=='string'){
+					container=DOC.getElementById(container);
+				}
+				if(container==null||container.nodeType!=1||container.nodeName.toLowerCase()=='body'||container.nodeName.toLowerCase()=='html'){
+					container=ROOT;
+				}
 			}
 			this.cb=func||this.dcb;
 			this.container=container||ROOT;
@@ -134,19 +139,20 @@
 			}
 			return this;
 		},
+		isArrayLike:function(elem){
+			var type=typeof elem;
+			return !!elem && type!='function' && type!='string' && (elem.length===0 || elem.length && (elem.length-1) in elem);
+		},
 		merge:function(elem){
-			var arr=[],
-				type=typeof elem,
-				i=this.length,
-				j=0;
-			if(elem){
-				arr=type!='function' && type!='string' && (elem.length===0 || elem.length && (elem.length-1) in elem) ? elem : [elem];
-				while(j<arr.length){
-					if(arr[j] && arr[j].nodeType==1)//确保是DOM节点
-						this[i++]=arr[j++];
-				}
-				this.length=i;
+			var i=this.length,
+				j=0,
+				arr=this.isArrayLike(elem) ? elem : [elem];
+			while(j<arr.length){
+				if(arr[j] && arr[j].nodeType==1)//确保是DOM节点
+					this[i++]=arr[j];
+				j++;
 			}
+			this.length=i;
 			return this;
 		},
 		check:function(){
