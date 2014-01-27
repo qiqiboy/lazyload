@@ -106,7 +106,7 @@
 			}else if(type=='object'){
 				func=cfg.callback;
 				container=cfg.container==null||
-					cfg.container.nodeType==9||
+					cfg.container.nodeType!=1||
 					cfg.container.nodeName.toLowerCase()=='body'||
 					cfg.container.nodeName.toLowerCase()=='html' ?
 					0 : cfg.container;
