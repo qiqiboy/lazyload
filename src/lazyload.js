@@ -15,7 +15,7 @@
 					offset=elem.getBoundingClientRect();
 					top=offset.top+WST;
 					left=offset.left+WSL;
-					elem=null;
+					break;
 				}else{//maybe need ???
 					left+=elem.offsetLeft||0;
 					top+=elem.offsetTop||0;
