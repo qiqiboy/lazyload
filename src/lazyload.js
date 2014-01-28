@@ -103,13 +103,14 @@
 			if(orig)this.src=orig;
 		},
 		init:function(elem, cfg){
-			var func,container,
+			var func,container,range,
 				type=typeof cfg;
 			if(type=='function'){
 				func=cfg;
 			}else if(type=='object'){
 				func=cfg.callback;
 				container=cfg.container;
+				range=parseFloat(cfg.range);
 				if(this.isArrayLike(container)){
 					container=container[0];
 				}
@@ -121,6 +122,7 @@
 				}
 			}
 			this.cb=func||this.dcb;
+			this.range=range||0;
 			this.container=container||ROOT;
 			return this.push(elem);
 		},
@@ -157,14 +159,14 @@
 			return this;
 		},
 		check:function(){
-			var i=0,
+			var i=0,range=this.range,
 				data=Data(this.container),
 				elem,
 				offset;
 			while(i<this.length){
 				elem=this[i];
 				offset=getOffset(elem);
-				if(offset.top+elem.offsetHeight>=data.WST && offset.top<=data.WST+data.WH && offset.left+elem.offsetWidth>=data.WSL && offset.left<=data.WSL+data.WW){
+				if(offset.top+elem.offsetHeight+range>=data.WST && offset.top-range<=data.WST+data.WH && offset.left+elem.offsetWidth+range>=data.WSL && offset.left-range<=data.WSL+data.WW){
 					this.cb.call(this.splice(i,1)[0]);
 				}else i++;
 			}

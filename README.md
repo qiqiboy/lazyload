@@ -14,9 +14,10 @@ lazyload
 /**
  * @param elem string 节点id
  *		  	   Element 节点对象
- *		  	   Array | imageCollection 一组图片的集合引用
+ *		  	   Array | ElementCollection 一组节点的集合引用
  *			   jQuery jquery对象，比如lazyload($('img.lazy'));
- * @param cfg Object|Function {callback:function(){},container:window} 如果cfg是一个函数，则默认为回调函数
+ * @param cfg Object|Function {callback:function(){},container:window,range:0} 如果cfg是一个函数，则默认为回调函数
+ *				如果cfg是一个object对象，则其中callback为回调函数，container为检测容器，range为检测范围容差，即目标节点距离视野中出现的距离
  */
 
 LazyLoad=function(elem, callback){}
