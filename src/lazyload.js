@@ -95,6 +95,7 @@
 		WST=0,WSL=0;
 			
 	Struct.fn=Struct.prototype={
+		constructor:Struct,
 		length:0,
 		splice:[].splice,
 		dcb:function(){//默认回调函数
