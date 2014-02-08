@@ -1,5 +1,5 @@
 /**
- * easy-lazyload v1.2
+ * easy-lazyload v1.3
  * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2014/01/26
  */
 
@@ -10,13 +10,14 @@
 	var DOC=ROOT.document,
 		getOffset=function(elem){
 			var top=0,left=0,offset;
-			while(elem){
-				if("getBoundingClientRect" in elem){
-					offset=elem.getBoundingClientRect();
-					top=offset.top+WST;
-					left=offset.left+WSL;
-					break;
-				}else{//maybe need ???
+			if("getBoundingClientRect" in elem){
+				offset=elem.getBoundingClientRect();
+				top=offset.top+WST;
+				left=offset.left+WSL;
+			}else{//maybe need ???
+				top+=elem.scrollTop||0;
+				left+=elem.scrollLeft||0;
+				while(elem){
 					left+=elem.offsetLeft||0;
 					top+=elem.offsetTop||0;
 					elem=elem.offsetParent;
