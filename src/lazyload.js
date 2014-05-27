@@ -1,5 +1,5 @@
 /**
- * easy-lazyload v1.3
+ * easy-lazyload v1.4
  * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2014/01/26
  */
 
@@ -93,6 +93,12 @@
 			}
 			return Data(elem)[key]=value;
 		},
+        isHidden=function(elem){
+            var doc=DOC.documentElement;
+            return elem.style.display=='none' || doc!==elem && !(
+				doc.contains ? doc.contains(elem) : doc.compareDocumentPosition && doc.compareDocumentPosition(b)&16
+			);
+        },
 		WST=0,WSL=0;
 			
 	Struct.fn=Struct.prototype={
@@ -167,7 +173,7 @@
 			while(i<this.length){
 				elem=this[i];
 				offset=getOffset(elem);
-				if(offset.top+elem.offsetHeight+range>=data.WST && offset.top-range<=data.WST+data.WH && offset.left+elem.offsetWidth+range>=data.WSL && offset.left-range<=data.WSL+data.WW){
+				if(!isHidden(elem) && offset.top+elem.offsetHeight+range>=data.WST && offset.top-range<=data.WST+data.WH && offset.left+elem.offsetWidth+range>=data.WSL && offset.left-range<=data.WSL+data.WW){
 					this.cb.call(this.splice(i,1)[0]);
 				}else i++;
 			}
