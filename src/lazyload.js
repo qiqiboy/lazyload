@@ -95,7 +95,7 @@
 		},
         isHidden=function(elem){
             var doc=DOC.documentElement;
-            return elem.style.display=='none' || doc!==elem && !(
+            return (elem.currentStyle||getComputedStyle(elem,null)||elem.style).display=='none' || doc!==elem && !(
 				doc.contains ? doc.contains(elem) : doc.compareDocumentPosition && doc.compareDocumentPosition(b)&16
 			);
         },
