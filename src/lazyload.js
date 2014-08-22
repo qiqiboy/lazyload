@@ -1,6 +1,6 @@
 /**
- * easy-lazyload v1.4
- * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2014/01/26
+ * easy-lazyload v1.5
+ * By qiqiboy, http://www.qiqiboy.com, http://weibo.com/qiqiboy, 2014/08/22
  */
 
 ;
@@ -178,7 +178,11 @@
 				}else i++;
 			}
 			return this;
-		}
+		},
+        empty:function(){
+            this.length=0;
+            return this;
+        }
 	}
 	
 	Struct.fn.init.prototype=Struct.fn;
