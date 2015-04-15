@@ -109,15 +109,16 @@
 			var orig=this.getAttribute('data-original');
 			if(orig)this.src=orig;
 		},
-		init:function(elem, cfg){
-			var func,container,range,
-				type=typeof cfg;
+		init:function(elem, range, callback){
+			var container,
+				type=typeof range;
+
 			if(type=='function'){
-				func=cfg;
+				callback=range;
 			}else if(type=='object'){
-				func=cfg.callback;
-				container=cfg.container;
-				range=parseFloat(cfg.range);
+				callback=range.callback;
+				container=range.container;
+				range=range.range;
 				if(this.isArrayLike(container)){
 					container=container[0];
 				}
@@ -128,8 +129,9 @@
 					container=ROOT;
 				}
 			}
-			this.cb=func||this.dcb;
-			this.range=range||0;
+
+			this.cb=callback||this.dcb;
+			this.range=parseFloat(range)||0;
 			this.container=container||ROOT;
 			return this.push(elem);
 		},
@@ -189,6 +191,6 @@
 	
 	return ROOT[NS]=Struct;
 	
-})(window, 'LazyLoad',function(elem, cfg){
-	return new arguments.callee.fn.init(elem, cfg);
+})(window, 'LazyLoad',function(elem, range, callback){
+	return new arguments.callee.fn.init(elem, range, callback);
 });
