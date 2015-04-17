@@ -59,7 +59,7 @@
 		},
 		Data=function(elem, key, value){
 			if(key==null){
-				return elem.lazyData||(elem.lazyData={ret:[],bind:null,timer:null,tick:function(){
+				return elem.lazyData||(elem.lazyData={ret:[],bind:null,lastTime:0,tick:function(){
 					var i=0,
 						win=elem,
 						data=Data(win),
@@ -83,9 +83,12 @@
 		
 					!data.ret.length && (data.bind=!removeEvent(win)); //队列为空则取消事件绑定
 				},resize:function(){
-					var data=Data(elem);
-					clearTimeout(data.timer);
-					data.timer=setTimeout(data.tick,100);
+					var data=Data(elem),
+                        now=+new Date;
+					if(now-data.lastTime>100){
+                        data.lastTime=now;
+                        data.tick();
+                    }
 				}});
 			}
 			if(value==null){
