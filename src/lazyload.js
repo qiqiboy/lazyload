@@ -63,6 +63,7 @@
                     var i=0,
                         win=elem,
                         data=Data(win),
+                        ret=data.ret,
                         doc=DOC.documentElement,
                         body=DOC.body,
                         isWin=win!=null&&win==win.window;
@@ -78,8 +79,8 @@
                         WSL=data.WSL;
                     }
 
-                    while(i<data.ret.length){
-                        data.ret[i].length?data.ret[i++].check():delete data.ret.splice(i,1)[0].checking;
+                    while(i<ret.length){
+                        ret[i].check().length?i++:delete data.ret.splice(i,1)[0].checking;
                     }
 
                     !data.ret.length && (data.bind=!removeEvent(win)); //队列为空则取消事件绑定
