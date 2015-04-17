@@ -109,7 +109,23 @@
                     doc.contains ? doc.contains(elem) : doc.compareDocumentPosition && doc.compareDocumentPosition(b)&16
                 );
         },
-        WST=0,WSL=0;
+        type=function(obj){
+            if(obj==null){
+                return obj+"";
+            }
+        
+            return typeof obj=='object'||typeof obj=='function' ? class2type[toString.call(obj)]||"object" :
+                typeof obj;
+        },
+        WST=0,WSL=0,
+        types="Boolean Number String Function Array Date RegExp Object Error".split(" "),
+        class2type={},
+        toString=class2type.toString,
+        i=0;
+
+    while(i<types.length){
+        class2type['[object '+types[i]+']']=types[i++];
+    }
 
     Struct.fn=Struct.prototype={
         constructor:Struct,
@@ -166,9 +182,8 @@
             return this;
         },
         isArrayLike:function(elem){
-            var type=typeof elem;
-
-            return !!elem && type!='function' && type!='string' && (elem.length===0 || elem.length && (elem.length-1) in elem);
+            var tp=type(elem);
+            return !!elem && tp!='function' && tp!='string' && (elem.length===0 || elem.length && (elem.length-1) in elem);
         },
         merge:function(elem){
             var i=this.length,
