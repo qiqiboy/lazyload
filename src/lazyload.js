@@ -124,7 +124,7 @@
         i=0;
 
     while(i<types.length){
-        class2type['[object '+types[i]+']']=types[i++];
+        class2type['[object '+types[i]+']']=types[i++].toLowerCase();
     }
 
     Struct.fn=Struct.prototype={
@@ -137,7 +137,7 @@
         },
         init:function(elem, range, callback){
             var container,
-                type=typeof range;
+                type=type(range);
 
             if(type=='function'){
                 callback=range;
@@ -148,7 +148,7 @@
                 if(this.isArrayLike(container)){
                     container=container[0];
                 }
-                if(typeof container=='string'){
+                if(type(container)=='string'){
                     container=DOC.getElementById(container);
                 }
                 if(container==null||container.nodeType!=1||container.nodeName.toLowerCase()=='body'||container.nodeName.toLowerCase()=='html'){
@@ -163,7 +163,7 @@
             return this.push(elem);
         },
         push:function(elem){
-            if(typeof elem == 'string'){
+            if(type(elem)=='string'){
                 elem=DOC.getElementById(elem);
             }
 
