@@ -137,11 +137,11 @@
         },
         init:function(elem, range, callback){
             var container,
-                type=type(range);
+                tp=type(range);
 
-            if(type=='function'){
+            if(tp=='function'){
                 callback=range;
-            }else if(type=='object'){
+            }else if(tp=='object'){
                 callback=range.callback;
                 container=range.container;
                 range=range.range;
