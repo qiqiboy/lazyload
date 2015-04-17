@@ -60,12 +60,13 @@
         Data=function(elem, key, value){
             if(key==null){
                 return elem.lazyData||(elem.lazyData={ret:[],bind:null,timer:null,lastTime:0,tick:function(){
-                        var i=0,
+                    var i=0,
                         win=elem,
                         data=Data(win),
                         doc=DOC.documentElement,
                         body=DOC.body,
                         isWin=win!=null&&win==win.window;
+
                     /* tick由浏览器resize或者scroll时触发，所以此刻更新相关数值 */
                     data.WST=(isWin ? win.pageYOffset || doc&&doc.scrollTop || body.scrollTop : getOffset(win).top) || 0;
                     data.WSL=(isWin ? win.pageXOffset || doc&&doc.scrollLeft || body.scrollLeft : getOffset(win).left) || 0;
@@ -120,7 +121,7 @@
         },
         init:function(elem, range, callback){
             var container,
-            type=typeof range;
+                type=typeof range;
 
             if(type=='function'){
                 callback=range;
@@ -142,13 +143,16 @@
             this.cb=callback||this.dcb;
             this.range=parseFloat(range)||0;
             this.container=container||ROOT;
+
             return this.push(elem);
         },
         push:function(elem){
             if(typeof elem == 'string'){
                 elem=DOC.getElementById(elem);
             }
+
             this.merge(elem);
+
             if(this.length){
                 var data=Data(this.container);
                 if(!this.checking){
@@ -158,29 +162,34 @@
                 data.resize();
                 !data.bind && (data.bind=addEvent(this.container))
             }
+
             return this;
         },
         isArrayLike:function(elem){
             var type=typeof elem;
+
             return !!elem && type!='function' && type!='string' && (elem.length===0 || elem.length && (elem.length-1) in elem);
         },
         merge:function(elem){
             var i=this.length,
-            j=0,
-            arr=this.isArrayLike(elem) ? elem : [elem];
+                j=0,
+                arr=this.isArrayLike(elem) ? elem : [elem];
+
             while(j<arr.length){
                 if(arr[j] && arr[j].nodeType==1)//确保是DOM节点
                     this[i++]=arr[j];
                 j++;
             }
             this.length=i;
+
             return this;
         },
         check:function(){
-            var i=0,range=this.range,
-            data=Data(this.container),
-            elem,
-            offset;
+            var i=0,
+                range=this.range,
+                data=Data(this.container),
+                elem,offset;
+
             while(i<this.length){
                 elem=this[i];
                 offset=getOffset(elem);
@@ -188,6 +197,7 @@
                     this.cb.call(this.splice(i,1)[0]);
                 }else i++;
             }
+
             return this;
         },
         empty:function(){
