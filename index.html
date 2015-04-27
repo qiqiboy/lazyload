@@ -35,7 +35,15 @@
 <p><img data-original="http://www.bing.com/az/hprichbg/rb/KelpGoose_ROW12403620614_1920x1080.jpg" src="images/holder.png" /></p>
 </div>
 <script>
-    LazyLoad([].slice.call(document.images,0,13),function(){
+    function getSlice(arr,start,end){
+        var i=start,ret=[];
+        for(;i<end;i++){
+            ret.push(arr[i]);
+        }
+        return ret;
+    }
+
+    LazyLoad(getSlice(document.images,0,13),function(){
         this.src=this.getAttribute('data-original');
         this.parentNode.appendChild(document.createTextNode('加载成功'));
     });
