@@ -34,5 +34,21 @@ LazyLoad(elem,function(){
 
 ````
 
+## jQuery/Zepto适配器
+```javascript
+
+$.fn.lazyload=function(args){
+	new lazyLoad(this,args);
+	
+	return this;
+}
+
+//使用
+$('.lazy').lazyload(function(){
+	this.src=this.getAttribute('data-original');
+}));
+
+````
+
 ## demo地址
 请点击http://u.boy.im/lazyload
