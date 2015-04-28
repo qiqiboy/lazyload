@@ -38,7 +38,7 @@ LazyLoad(elem,function(){
 ```javascript
 
 $.fn.lazyload=function(args){
-	new lazyLoad(this,args);
+	new LazyLoad(this,args);
 	
 	return this;
 }
