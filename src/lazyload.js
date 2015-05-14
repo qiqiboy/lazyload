@@ -226,6 +226,6 @@
 
     return ROOT[NS]=Struct;
 
-})(window, 'LazyLoad',function self(elem, range, callback){
-    return new self.fn.init(elem, range, callback);
+})(window, 'LazyLoad',function(elem, range, callback){
+    return new arguments.callee.fn.init(elem, range, callback);
 });
