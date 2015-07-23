@@ -223,8 +223,12 @@
     }
 
     Struct.fn.init.prototype=Struct.fn;
-
-    return ROOT[NS]=Struct;
+    
+    if(typeof define=='function' && define.amd){
+        define(NS,function(){
+            return Struct;
+        });
+    }else ROOT[NS]=Struct;
 
 })(window, 'LazyLoad',function(elem, range, callback){
     return new arguments.callee.fn.init(elem, range, callback);
